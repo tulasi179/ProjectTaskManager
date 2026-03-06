@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Z1yrbDsoHyE=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\Desktop\\ProjectTaskManager\\Projecttaskmanager\\Projecttaskmanager.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.3\\microsoft.aspnetcore.openapi.10.0.3.nupkg.sha512",
+    "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\microsoft.openapi\\2.0.0\\microsoft.openapi.2.0.0.nupkg.sha512",
+    "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\scalar.aspnetcore\\2.13.1\\scalar.aspnetcore.2.13.1.nupkg.sha512"
+  ],
+  "logs": []
+}

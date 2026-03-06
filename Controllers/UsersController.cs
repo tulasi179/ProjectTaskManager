@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Projecttaskmanager.Models;
+using Projecttaskmanager.Services;
+
+namespace Projecttaskmanager.Controllers;
+
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UsersController(IUsersService service) : ControllerBase
+    {
+        //we need to inject the service , there are two ways to do that
+
+        //1st : using the constructor (older way)
+        /*
+        private static readonly List<Users> characters = new()
+        {
+        new Users{id = 1, Username="fghjk", passwordhash="dfghjkl",Isactive=true}
+        }
+        */
+
+        //2nd way is implemented in the code.
+
+        
+       [HttpGet]
+        public async Task<ActionResult<List<Users>>> GetUsers()
+                 => Ok(await service.GetAllUsersAsync());
+        //  instead of the above method you can aslo this method below..
+    //    public async Task<ActionResult<List<Users>>> GetUsers()
+    //    {
+    //       return Ok(users);
+    //    }
+    }
