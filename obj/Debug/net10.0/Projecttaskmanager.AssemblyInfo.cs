@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Projecttaskmanager")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fcddef093de7efde2cf35937e7a3d00ed9abe295")]
 [assembly: System.Reflection.AssemblyProductAttribute("Projecttaskmanager")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Projecttaskmanager")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

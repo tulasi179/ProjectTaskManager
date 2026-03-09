@@ -28,9 +28,10 @@ public class UsersServices : IUsersService
     public async Task<List<Users>> GetAllUsersAsync()
      => await Task.FromResult((users));
 
-    public Task<Users> GetUserByIdAsync(int id)
+    public async Task<Users?> GetUserByIdAsync(int id)
     {
-        throw new NotImplementedException();
+       var result= users.FirstOrDefault(c => c.Id == id);
+       return await Task.FromResult(result);
 
     }
     public Task<bool> UpdateUserAysnc(int id, Users users)

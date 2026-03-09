@@ -35,5 +35,18 @@ namespace Projecttaskmanager.Controllers;
     //    public async Task<ActionResult<List<Users>>> GetUsers()
     //    {
     //       return Ok(users);
-    //    }
+    //    
+
+         [HttpGet("{id}")]
+         public async Task<ActionResult<Users>> GetUser(int id)
+            {
+                var user = await service.GetUserByIdAsync(id);
+                return user is null ? NotFound("user with the given Id was not found") : Ok(user);
+                // if(user is null)
+                //     {
+                //         return NotFound("User with the given id way not found");
+                //     }
+                // return Ok(user);
+            }
+
     }
