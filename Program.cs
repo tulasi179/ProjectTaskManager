@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Components.Infrastructure;
+using Projecttaskmanager.Data;
+using Microsoft.EntityFrameworkCore;
 using Projecttaskmanager.Services;
 using Scalar.AspNetCore;
 
@@ -10,9 +12,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //Scoped means that thing live out through the whole request.
 //until it return the final request
 builder.Services.AddScoped<IUsersService, UsersServices>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ITaskDependencyService, TaskDependencyService>();
 //DI(Dependency Injection)
 //when ever something wants to inject the  IUserService then it will auotomatically
 // get the UsersService implementation.

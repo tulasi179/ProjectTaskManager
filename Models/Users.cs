@@ -11,7 +11,7 @@ public class Users
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // // Navigation properties
-    // public ICollection<Project> OwnedProjects { get; set; } = new List<Project>();
+     //public ICollection<Project> OwnedProjects { get; set; } = new List<Project>();
     // public ICollection<Task> AssignedTasks { get; set; } = new List<Task>();
     // public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     

@@ -1,19 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Projecttaskmanager.Data;
 using Projecttaskmanager.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Projecttaskmanager.Services;
 
-public class UsersServices : IUsersService
+public class UsersServices(AppDbContext context) : IUsersService
 {
-
-    static List<Users> users= new List<Users> {
-             new Users {Id =1, Username ="Tulasi", Email = "tulasinalluri23@gmail.com", PasswordHash = "password1234", Role = "User", IsActive = true},
-              new Users{Id = 2, Username = "Tejaswi", Email = "tejanalluri293@hamil.com", PasswordHash = "teaswi@2004", Role = "Admin", IsActive = true},
-              new Users{Id = 3, Username = "Sai", Email = "sai@gmail.com", PasswordHash = "Pass123", Role = "Admin", IsActive = true},
-              new Users{Id = 4 , Username = "Nikhita", Email="Nikhita@gmail.com",PasswordHash ="ssap321", Role="User" , IsActive=true }
-        
-        };
 
     public Task<Users> AddUsersAsync(Users users)
     {
@@ -26,12 +20,12 @@ public class UsersServices : IUsersService
     }
 
     public async Task<List<Users>> GetAllUsersAsync()
-     => await Task.FromResult((users));
+     => await context.User.ToListAsync();
 
     public async Task<Users?> GetUserByIdAsync(int id)
     {
-       var result= users.FirstOrDefault(c => c.Id == id);
-       return await Task.FromResult(result);
+       var result= await context.User.FindAsync(id);
+       return result;
 
     }
     public Task<bool> UpdateUserAysnc(int id, Users users)
