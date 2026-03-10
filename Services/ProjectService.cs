@@ -23,19 +23,37 @@ public class ProjectService(AppDbContext context) :IProjectService
         return result;
     }
 
-    public  Task<Project> AddProjectAsync(Project project)
+    public  async Task<Project> AddProjectAsync(Project project)
     {
-         throw new NotImplementedException();
+         context.project.Add(project);
+         await context.SaveChangesAsync();
+         return project;
     }
 
-    public Task<bool> UpdateProjectAsync(int id, Project project)
+    public async Task<bool> UpdateProjectAsync(int id, Project project)
     {
-         throw new NotImplementedException();
+        var pro = await context.project.FindAsync(id);
+
+        if(pro==null)
+        return false;
+
+        pro.Name = project.Name;
+        pro.OwnerId = project.OwnerId;
+        pro.EndDate = project.EndDate;
+         
+         await context.SaveChangesAsync();
+         return true;
     }
 
-    public  Task<bool> DeleteProjectAsync(int id)
+    public  async Task<bool> DeleteProjectAsync(int id)
     {
-         throw new NotImplementedException();
+        var pro = await context.project.FindAsync(id);
+        if(pro==null)
+            return false;
+
+        context.project.Remove(pro);
+        await context.SaveChangesAsync();
+        return true;
     }
 
 }

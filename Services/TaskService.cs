@@ -26,23 +26,45 @@ public class TaskService(AppDbContext context): ITaskService
         return task;
     }
 
-      public   Task<ProjectTasks?> GetTasksByProjectId(int id)
+      public   async Task<List<ProjectTasks>> GetTasksByProjectId(int id)
     {
-         throw new NotImplementedException();
+         return await context.tasks.
+                Where(t => t.ProjectId==id)
+                .ToListAsync();
     }
 
-    public Task<ProjectTasks> AddTasksAsync(ProjectTasks tasks)
+    public async Task<ProjectTasks> AddTasksAsync(ProjectTasks tasks)
     {
-         throw new NotImplementedException();
+        context.tasks.Add(tasks);
+        await context.SaveChangesAsync();
+        return tasks;
     }
 
-    public  Task<bool> DeleteTaskAsync(int id)
+    public  async Task<bool> DeleteTaskAsync(int id)
     {
-         throw new NotImplementedException();
+         var res = await context.tasks.FindAsync(id);
+         if(res == null)
+         return false;
+
+         context.tasks.Remove(res);
+         await context.SaveChangesAsync();
+         return true;
     }
-    public Task<bool> UpdateTaskAsync(int id, ProjectTasks tasks)
+    public async Task<bool> UpdateTaskAsync(int id, ProjectTasks tasks)
     {
-        throw new NotImplementedException();
+        var existing = await context.tasks.FindAsync(id);
+
+        if(existing == null)
+        return false;
+
+        existing.AssigneeId = tasks.AssigneeId;
+        existing.Description = tasks.Description;
+        existing.ProjectId = tasks.ProjectId;
+        existing.Status = tasks.Status;
+        existing.Title = tasks.Title;
+
+        await context.SaveChangesAsync();
+        return true;
     }
 
 

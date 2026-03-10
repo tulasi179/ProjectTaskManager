@@ -48,5 +48,34 @@ namespace Projecttaskmanager.Controllers;
                 //     }
                 // return Ok(user);
             }
+         [HttpPost]
+        public async Task<ActionResult<Users>> CreateUser(Users user)
+        {
+            var createdUser = await service.AddUsersAsync(user);
 
+            return Ok(createdUser);
+        }
+
+         [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(int id, Users user)
+    {
+        var result = await service.UpdateUserAysnc(id, user);
+
+        if (!result)
+            return NotFound("User not found");
+
+        return Ok("User updated successfully");
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteUser(int id)
+    {
+        var result = await service.DeleteUsersAysnc(id);
+
+        if (!result)
+            return NotFound("User not found");
+
+        return Ok("User deleted successfully");
+    }
+           
     }

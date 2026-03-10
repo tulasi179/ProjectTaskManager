@@ -16,26 +16,26 @@ public class TaskDependencyService(AppDbContext context) : ITaskDependencyServic
 
     public async Task<TaskDependency> AddDependency(TaskDependency dependency)
     {
-        // context.dependent.Add(dependency);
-        // await context.SaveChangesAsync();
-        // return dependency;
-        throw new NotImplementedException();
+        context.dependent.Add(dependency);
+        await context.SaveChangesAsync();
+        return dependency;
+       
     }
 
     public async Task<bool> RemoveDependency(int taskId, int dependentTaskId)
     {
-        // var dependency = await context.dependent
-        //     .FirstOrDefaultAsync(d =>
-        //         d.TaskId == taskId &&
-        //         d.DependentTaskId == dependentTaskId);
+        var dependency = await context.dependent
+            .FirstOrDefaultAsync(d =>
+                d.TaskId == taskId &&
+                d.DependentTaskId == dependentTaskId);
 
-        // if (dependency == null)
-        //     return false;
+        if (dependency == null)
+            return false;
 
-        // context.dependent.Remove(dependency);
-        // await context.SaveChangesAsync();
+        context.dependent.Remove(dependency);
+        await context.SaveChangesAsync();
 
-        // return true;
-        throw new NotImplementedException();
+        return true;
+        // throw new NotImplementedException();
     }
 }

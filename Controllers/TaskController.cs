@@ -48,5 +48,44 @@ namespace Projecttaskmanager.Controllers;
                 //     }
                 // return Ok(user);
             }
+            [HttpGet("project/{id}")]
+        public async Task<ActionResult<List<ProjectTasks>>> GetTasksByProject(int id)
+        {
+            var tasks = await service.GetTasksByProjectId(id);
+
+            if (!tasks.Any())
+                return NotFound("No Task is Assigned to that Project");
+
+            return Ok(tasks);
+        }
+        [HttpPost]
+        public async Task<ActionResult<ProjectTasks>> CreateTask(ProjectTasks tasks)
+    {
+        var CreatedTask = await service.AddTasksAsync(tasks);
+        return Ok(CreatedTask);
+    }
+
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTask(int id , ProjectTasks tasks)
+    {
+        var result = await service.UpdateTaskAsync(id,tasks);
+
+        if(!result)
+        return NotFound("Task Not found");
+
+        return Ok("User Updated sucessfully");
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTask(int id)
+    {
+        var result = await service.DeleteTaskAsync(id);
+
+        if(!result)
+        return NotFound("Task Not Found");
+
+        return Ok("Task Deleted Successfully");
+    }
 
     }

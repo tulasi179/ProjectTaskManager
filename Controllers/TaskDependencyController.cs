@@ -28,4 +28,27 @@ public class TaskDependencyController(ITaskDependencyService service) : Controll
 
             return Ok(tasks);
         }
+
+          [HttpPost]
+    public async Task<ActionResult<TaskDependency>> AddDependency(TaskDependency dependency)
+    {
+        var result = await service.AddDependency(dependency);
+
+        return CreatedAtAction(
+            nameof(GetDependencies),
+            new { taskId = result.TaskId },
+            result
+        );
+    }
+
+     [HttpDelete("{taskId}/ {dependenttaskId}")]
+    public async Task<IActionResult> RemoveDependency(int taskId, int dependentTaskId)
+    {
+        var result = await service.RemoveDependency(taskId, dependentTaskId);
+
+        if (!result)
+            return NotFound("Dependency not found");
+
+        return Ok("Dependency removed successfully");
+    }
 }

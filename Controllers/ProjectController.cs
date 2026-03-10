@@ -48,5 +48,31 @@ namespace Projecttaskmanager.Controllers;
                 //     }
                 // return Ok(user);
             }
+            [HttpPost]
+            public async Task<ActionResult<Project>> CreateProject(Project project)
+            {
+                var createdPro = await service.AddProjectAsync(project);
+                return Ok(createdPro);
+            }
+
+            [HttpPut("{id}")]
+            public async Task<IActionResult> UpdateProject(int id , Project project)
+            {
+                var updated  = await service.UpdateProjectAsync(id, project);
+                if(!updated)
+                return NotFound("Project Not found");
+            
+                return Ok("Project Updated Sucessfully");
+            }
+
+            [HttpDelete("{id}")]
+            public async Task<IActionResult> DeletePro(int id)
+            {
+                var pro = await service.DeleteProjectAsync(id);
+                if(!pro)
+                return NotFound("Project Not Found");
+
+                return Ok("Project Deleted Successfully");
+            }
 
     }

@@ -9,16 +9,6 @@ namespace Projecttaskmanager.Services;
 public class UsersServices(AppDbContext context) : IUsersService
 {
 
-    public Task<Users> AddUsersAsync(Users users)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool>  DeleteUsersAysnc(int id)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<List<Users>> GetAllUsersAsync()
      => await context.User.ToListAsync();
 
@@ -28,9 +18,46 @@ public class UsersServices(AppDbContext context) : IUsersService
        return result;
 
     }
-    public Task<bool> UpdateUserAysnc(int id, Users users)
+    public async Task<Users> AddUsersAsync(Users users)
     {
-        throw new NotImplementedException();
+         context.User.Add(users);
+
+        await context.SaveChangesAsync();
+
+        return users;
+    }
+
+    public async Task<bool>  DeleteUsersAysnc(int id)
+    {
+        var user = await context.User.FindAsync(id);
+
+        if (user == null)
+            return false;
+
+        context.User.Remove(user);
+
+        await context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> UpdateUserAysnc(int id, Users users)
+    {
+        var existingUser = await context.User.FindAsync(id);
+
+        if (existingUser == null)
+            return false;
+
+        existingUser.Username = users.Username;
+        existingUser.Email= users.Email;
+        existingUser.PasswordHash = users.PasswordHash;
+        existingUser.Role = users.Role;
+        existingUser.IsActive = users.IsActive;
+        existingUser.CreatedAt = DateTime.Now;
+
+        await context.SaveChangesAsync();
+
+        return true;
     }
 
 }

@@ -23,7 +23,7 @@ namespace Projecttaskmanager.Services
 
     Task<List<ProjectTasks>> GetAllTasksAsync();
 
-    Task<ProjectTasks?> GetTasksByProjectId(int id);
+    Task<List<ProjectTasks>> GetTasksByProjectId(int id);
 
     Task<ProjectTasks?> GetTasksByIdAsync(int id);
 
