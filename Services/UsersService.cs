@@ -3,18 +3,34 @@ using Microsoft.AspNetCore.Identity;
 using Projecttaskmanager.Data;
 using Projecttaskmanager.Models;
 using Microsoft.EntityFrameworkCore;
+using Projecttaskmanager.DTOs;
 
 namespace Projecttaskmanager.Services;
 
 public class UsersServices(AppDbContext context) : IUsersService
 {
 
-    public async Task<List<Users>> GetAllUsersAsync()
-     => await context.User.ToListAsync();
+    public async Task<List<UserResponce>> GetAllUsersAsync()
+     => await context.User.Select(c => new UserResponce
+     {
+         Username = c.Username,
+         Email = c.Email,
+         Role = c.Role
 
-    public async Task<Users?> GetUserByIdAsync(int id)
+     }).ToListAsync();
+
+    public async Task<UserResponce?> GetUserByIdAsync(int id)
     {
-       var result= await context.User.FindAsync(id);
+       var result= await context.User
+            .Where(c =>c.Id ==id)
+            .Select(c => new UserResponce
+            {
+                Username = c.Username,
+                Email = c.Email,
+                Role = c.Role
+            })
+            .FirstOrDefaultAsync();
+
        return result;
 
     }

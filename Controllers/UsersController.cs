@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Projecttaskmanager.Models;
 using Projecttaskmanager.Services;
+using Projecttaskmanager.DTOs;
 
 namespace Projecttaskmanager.Controllers;
 
@@ -29,7 +30,7 @@ namespace Projecttaskmanager.Controllers;
 
         
        [HttpGet]
-        public async Task<ActionResult<List<Users>>> GetUsers()
+        public async Task<ActionResult<List<UserResponce>>> GetUsers()
                  => Ok(await service.GetAllUsersAsync());
         //  instead of the above method you can aslo this method below..
     //    public async Task<ActionResult<List<Users>>> GetUsers()
@@ -38,7 +39,7 @@ namespace Projecttaskmanager.Controllers;
     //    
 
          [HttpGet("{id}")]
-         public async Task<ActionResult<Users>> GetUser(int id)
+         public async Task<ActionResult<UserResponce>> GetUser(int id)
             {
                 var user = await service.GetUserByIdAsync(id);
                 return user is null ? NotFound("user with the given Id was not found") : Ok(user);
