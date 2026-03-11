@@ -5,7 +5,7 @@
 namespace Projecttaskmanager.Migrations
 {
     /// <inheritdoc />
-    public partial class guidid : Migration
+    public partial class AddGuidid : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

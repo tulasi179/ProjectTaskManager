@@ -4,7 +4,7 @@ using Projecttaskmanager.Models;
 namespace Projecttaskmanager.Services;
 
 
-public class TaskService(AppDbContext context): ITaskService
+public class TaskService(AppDbContext context, INotificationService notificationService): ITaskService
 {
     //  Task<List<ProjectTasks>> GetAllTasksAsync();
 
@@ -66,6 +66,35 @@ public class TaskService(AppDbContext context): ITaskService
         await context.SaveChangesAsync();
         return true;
     }
+
+    public async Task CompleteTask(int taskId)
+{
+    var task = await context.tasks.FindAsync(taskId);
+    if(task == null)
+    throw new Exception("Task not found");
+
+    task.Status = "Completed";
+
+    await context.SaveChangesAsync();
+
+    var dependentTasks = await context.dependent
+        .Where(td => td.DependentTaskId == taskId)
+        .ToListAsync();
+
+    foreach (var dependency in dependentTasks)
+    {
+        var nextTask = await context.tasks
+            .FindAsync(dependency.TaskId);
+
+        if (nextTask != null)
+        {
+            await notificationService.CreateNotification(
+                nextTask.AssigneeId,
+                $"Task '{nextTask.Title}' is now unblocked and ready to start."
+            );
+        }
+    }
+}
 
 
 }

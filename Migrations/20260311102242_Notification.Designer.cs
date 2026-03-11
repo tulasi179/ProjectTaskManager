@@ -12,8 +12,8 @@ using Projecttaskmanager.Data;
 namespace Projecttaskmanager.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260311085832_guidid")]
-    partial class AddGuidid
+    [Migration("20260311102242_Notification")]
+    partial class Notification
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,32 @@ namespace Projecttaskmanager.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Projecttaskmanager.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("ReadStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("notify");
+                });
 
             modelBuilder.Entity("Projecttaskmanager.Models.Project", b =>
                 {

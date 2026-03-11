@@ -16,8 +16,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<ProjectTasks> tasks => Set<ProjectTasks>();
 
     public DbSet<TaskDependency> dependent => Set<TaskDependency>();
+    public DbSet<Notification> notify => Set<Notification>();
 
-//to create component key...
+
+//to create composite key...
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<TaskDependency>()

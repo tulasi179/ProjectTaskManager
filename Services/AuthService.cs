@@ -15,8 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Projecttaskmanager.DTOs;
-using Projecttaskmanager.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 namespace Projecttaskmanager.Services;
@@ -39,7 +37,7 @@ public class AuthService(AppDbContext context , IConfiguration configuration) :I
         return await CreateTokenResponse(user);
     }
 
-    private async Task<TokenResponce> CreateTokenResponse(Users? user)
+    private async Task<TokenResponce> CreateTokenResponse(Users user)
     {
         return new TokenResponce
         {
@@ -81,7 +79,7 @@ public class AuthService(AppDbContext context , IConfiguration configuration) :I
        return await CreateTokenResponse(user);
     }
 
-    
+
     private async Task<Users?> ValidateRefreshTokenAsync(int userId , string refreshToken)
     {
        var user = await context.User.FindAsync(userId);

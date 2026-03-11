@@ -43,6 +43,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ITaskDependencyService, TaskDependencyService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 //DI(Dependency Injection)
 //when ever something wants to inject the  IUserService then it will auotomatically
 // get the UsersService implementation.
