@@ -96,5 +96,58 @@ public class TaskService(AppDbContext context, INotificationService notification
     }
 }
 
+    /*    public async Task CompleteTask(int taskId)
+{
+    var task = await context.ProjectTasks.FindAsync(taskId);
+
+    if (task == null)
+        throw new Exception("Task not found");
+
+    task.Status = "Completed";
+
+    await context.SaveChangesAsync();
+
+    // find tasks that depend on this task
+    var dependentTasks = await context.TaskDependencies
+        .Where(td => td.DependentTaskId == taskId)
+        .ToListAsync();
+
+    foreach (var dependency in dependentTasks)
+    {
+        var nextTask = await context.ProjectTasks
+            .FirstOrDefaultAsync(t => t.Id == dependency.TaskId);
+
+        if (nextTask == null)
+            continue;
+
+        // check if all dependencies of this task are completed
+        var allDependencies = await context.TaskDependencies
+            .Where(td => td.TaskId == nextTask.Id)
+            .ToListAsync();
+
+        bool allCompleted = true;
+
+        foreach (var dep in allDependencies)
+        {
+            var depTask = await context.ProjectTasks
+                .FirstOrDefaultAsync(t => t.Id == dep.DependentTaskId);
+
+            if (depTask.Status != "Completed")
+            {
+                allCompleted = false;
+                break;
+            }
+        }
+
+        if (allCompleted)
+        {
+            await notificationService.CreateNotification(
+                nextTask.AssigneeId,
+                $"Task '{nextTask.Title}' is now unblocked."
+            );
+        }
+    }
+}*/
+
 
 }
