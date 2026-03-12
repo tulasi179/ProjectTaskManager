@@ -9,9 +9,11 @@ using Microsoft.Extensions.Logging;
 using Projecttaskmanager.Models;
 using Projecttaskmanager.Services;
 using Projecttaskmanager.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Projecttaskmanager.Controllers;
 
+    [Authorize(Roles = "Admin")] 
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController(IUsersService service) : ControllerBase
@@ -49,13 +51,22 @@ namespace Projecttaskmanager.Controllers;
                 //     }
                 // return Ok(user);
             }
+         
          [HttpPost]
-        public async Task<ActionResult<Users>> CreateUser(Users user)
+        public async Task<ActionResult<Users>> CreateUser(UserResponce user)
         {
-            var createdUser = await service.AddUsersAsync(user);
+            var newUser = new Users
+            {
+                Username = user.Username,
+                Email = user.Email,
+                Role = user.Role
+            };
+
+            var createdUser = await service.AddUsersAsync(newUser);
 
             return Ok(createdUser);
         }
+
 
          [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, Users user)

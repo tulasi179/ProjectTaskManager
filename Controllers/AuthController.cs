@@ -46,7 +46,7 @@ namespace Projecttaskmanager.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<TokenResponce>> RefreshToken(RefeshTokenRequestDto request)
+        public async Task<ActionResult<TokenResponce>> RefreshToken(RefreshTokenRequestDto request)
         {
             var result =await authService.RefreshTokensAsync(request);
             if(result is null || result.AccessToken is null || result.RefreshToken is null)

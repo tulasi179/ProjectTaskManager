@@ -4,13 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Projecttaskmanager.Models;
 using Projecttaskmanager.Services;
 
 namespace Projecttaskmanager.Controllers;
-
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class TaskDependencyController(ITaskDependencyService service) : ControllerBase
