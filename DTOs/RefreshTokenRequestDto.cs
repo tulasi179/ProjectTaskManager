@@ -1,6 +1,6 @@
 namespace Projecttaskmanager.DTOs;
 
-public class RefeshTokenRequestDto
+public class RefreshTokenRequestDto
 {
     public int UserId {get; set;}
     public required string RefreshToken {get ; set;}

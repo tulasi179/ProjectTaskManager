@@ -70,7 +70,8 @@ public class AuthService(AppDbContext context , IConfiguration configuration) :I
             return user;
     }
 
-     public async Task<TokenResponce?> RefreshTokensAsync(RefeshTokenRequestDto request)
+        //This runs when the access token expires.
+     public async Task<TokenResponce?> RefreshTokensAsync(RefreshTokenRequestDto request)
     {
        var user = await ValidateRefreshTokenAsync(request.UserId , request.RefreshToken);
        if(user is null)
@@ -92,7 +93,7 @@ public class AuthService(AppDbContext context , IConfiguration configuration) :I
 
     private string GenerateRefreshToken()
     {
-        var randomNumber = new byte[32];
+        var randomNumber = new byte[32];//256 Bits security
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
@@ -117,14 +118,21 @@ public class AuthService(AppDbContext context , IConfiguration configuration) :I
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")!));
-            
+            //Loads secret key from appsettings.json.
+            //configuration.GetValue<string>("AppSettings:Token")This reads the secret key from your configuration file.
+            //Encoding.UTF8.GetBytes(...)  JWT cryptographic functions cannot work with strings directly.They require byte arrays.So this converts the string into bytes.
+            //new SymmetricSecurityKey(...) Now those bytes are used to create a security key object.
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+            //This line tells the system: How the token should be signed.
+            //This class holds the information needed to sign the token. It needs two things:1️ Security key,2️ Signing algorithm
 
+
+            //creates Jwt Object.
             var tokenDescriptor = new JwtSecurityToken(
                 issuer: configuration.GetValue<string>("AppSettings:Issuer"),
                 audience: configuration.GetValue<string>("AppSettings:Audience"),
                 claims: claims,
-                expires : DateTime.UtcNow.AddDays(1),
+                expires : DateTime.UtcNow.AddMinutes(15),
                 signingCredentials :creds
             );
 
