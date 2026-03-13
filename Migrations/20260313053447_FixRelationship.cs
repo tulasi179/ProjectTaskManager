@@ -44,7 +44,7 @@ namespace Projecttaskmanager.Migrations
                 column: "OwnerId",
                 principalTable: "User",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_tasks_User_AssigneeId",
@@ -52,7 +52,7 @@ namespace Projecttaskmanager.Migrations
                 column: "AssigneeId",
                 principalTable: "User",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_tasks_project_ProjectId",
@@ -60,7 +60,7 @@ namespace Projecttaskmanager.Migrations
                 column: "ProjectId",
                 principalTable: "project",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
 
         /// <inheritdoc />

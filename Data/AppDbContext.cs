@@ -20,7 +20,49 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 //to create composite key...
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // ── TaskDependency composite PK ──────────────────────────────
         modelBuilder.Entity<TaskDependency>()
             .HasKey(td => new { td.TaskId, td.DependentTaskId });
+
+        // ── Users → Projects (one owner, many projects) ──────────────
+        modelBuilder.Entity<Project>()
+            .HasOne(p => p.Owner)
+            .WithMany(u => u.OwnedProjects)
+            .HasForeignKey(p => p.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict); // don't delete projects when user deleted
+
+            modelBuilder.Entity<ProjectTasks>()
+            .HasOne(t => t.Project)
+            .WithMany(p => p.Tasks)
+            .HasForeignKey(t => t.ProjectId)
+            .OnDelete(DeleteBehavior.Restrict); // ← was Cascade, now Restrict
+
+        // ── Users → Tasks (one assignee, many tasks) ─────────────────
+        modelBuilder.Entity<ProjectTasks>()
+            .HasOne(t => t.Assignee)
+            .WithMany(u => u.AssignedTasks)
+            .HasForeignKey(t => t.AssigneeId)
+            .OnDelete(DeleteBehavior.Restrict); // don't wipe tasks when user deleted
+
+        // ── Users → Notifications (one user, many notifications) ─────
+        modelBuilder.Entity<Notification>()
+            .HasOne(n => n.User)
+            .WithMany(u => u.Notifications)
+            .HasForeignKey(n => n.UserId)
+            .OnDelete(DeleteBehavior.Cascade); // delete notifications when user deleted
+
+        // ── TaskDependency → Task (the task that has a dependency) ───
+        modelBuilder.Entity<TaskDependency>()
+            .HasOne(td => td.Task)
+            .WithMany(t => t.Dependencies)
+            .HasForeignKey(td => td.TaskId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // ── TaskDependency → DependentTask (the task being depended on)
+        modelBuilder.Entity<TaskDependency>()
+            .HasOne(td => td.DependentTask)
+            .WithMany(t => t.Dependents)
+            .HasForeignKey(td => td.DependentTaskId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

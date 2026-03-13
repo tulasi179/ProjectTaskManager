@@ -5,21 +5,19 @@ namespace Projecttaskmanager.Models;
 
 public class Project
 {
-    //(Id, Name, OwnerId, StartDate, EndDate)
-
-     public int Id { get; set; }
-
-     public string Name{ get; set;}= null!;
+   public int Id { get; set; }
+    public string Name { get; set; } = null!;
 
     [Required]
-     public int OwnerId{ get; set;} 
-
-     public DateTime StartDate{ get ; set;}=DateTime.Now;
+    public int OwnerId { get; set; }
+    public DateTime StartDate { get; set; } = DateTime.Now;
 
     [Required]
-     public DateTime EndDate{get; set;}
+    public DateTime EndDate { get; set; }
 
-      public ICollection<ProjectTasks> Tasks { get; set; } = new List<ProjectTasks>();
+    // Navigation properties
+    public Users Owner { get; set; } = null!;
+    public ICollection<ProjectTasks> Tasks { get; set; } = new List<ProjectTasks>();
 
 
 }
