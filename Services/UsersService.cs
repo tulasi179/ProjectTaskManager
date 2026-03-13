@@ -57,19 +57,19 @@ public class UsersServices(AppDbContext context) : IUsersService
         return true;
     }
 
-    public async Task<bool> UpdateUserAysnc(int id, Users users)
+    public async Task<bool> UpdateUserAysnc(int id, UserResponce dto)
     {
         var existingUser = await context.User.FindAsync(id);
 
         if (existingUser == null)
             return false;
 
-        existingUser.Username = users.Username;
-        existingUser.Email= users.Email;
-        existingUser.PasswordHash = users.PasswordHash;
-        existingUser.Role = users.Role;
-        existingUser.IsActive = users.IsActive;
-        existingUser.CreatedAt = DateTime.Now;
+        existingUser.Username = dto.Username;
+        existingUser.Email= dto.Email;
+       // existingUser.PasswordHash = dto.PasswordHash;
+        existingUser.Role = dto.Role;
+        existingUser.IsActive = dto.IsActive;
+       // existingUser.CreatedAt = DateTime.Now;
 
         await context.SaveChangesAsync();
 

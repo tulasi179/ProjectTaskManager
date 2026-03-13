@@ -58,6 +58,7 @@ namespace Projecttaskmanager.Controllers;
             var newUser = new Users
             {
                 Username = user.Username,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.Password),
                 Email = user.Email,
                 Role = user.Role
             };
@@ -68,16 +69,17 @@ namespace Projecttaskmanager.Controllers;
         }
 
 
-         [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateUser(int id, Users user)
-    {
-        var result = await service.UpdateUserAysnc(id, user);
+         
+    [HttpPut("{id}")]
+public async Task<IActionResult> UpdateUser(int id, UserResponce dto)
+{
+    var result = await service.UpdateUserAysnc(id, dto);
 
-        if (!result)
-            return NotFound("User not found");
+    if (!result)
+        return NotFound("User not found");
 
-        return Ok("User updated successfully");
-    }
+    return Ok("User updated successfully");
+}
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(int id)

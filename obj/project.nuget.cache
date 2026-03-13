@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "6SdiYMiJqbs=",
+  "dgSpecHash": "Yhu2/jZ/RuI=",
   "success": true,
   "projectFilePath": "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\Desktop\\ProjectTaskManager\\Projecttaskmanager\\Projecttaskmanager.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
+    "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\coverlet.collector\\8.0.0\\coverlet.collector.8.0.0.nupkg.sha512",
     "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\TULASINALLURI.DESKTOP-NALLURI\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.4\\microsoft.aspnetcore.authentication.jwtbearer.10.0.4.nupkg.sha512",

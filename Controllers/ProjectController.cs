@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Projecttaskmanager.Models;
 using Projecttaskmanager.Services;
+using Microsoft.AspNetCore.Authorization;
 namespace Projecttaskmanager.Controllers;
 
-
+    //Allow Only Logged-In Users [Authorize]
+    [Authorize(Roles = "Admin")] 
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectController(IProjectService service) : ControllerBase

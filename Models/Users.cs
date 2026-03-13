@@ -14,8 +14,8 @@ public class Users
     public DateTime? RefreshTokenExpiryTime {get; set; }
 
     // // Navigation properties
-     //public ICollection<Project> OwnedProjects { get; set; } = new List<Project>();
-    // public ICollection<Task> AssignedTasks { get; set; } = new List<Task>();
-    // public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+     public ICollection<Project> OwnedProjects { get; set; } = new List<Project>();
+    public ICollection<ProjectTasks> AssignedTasks { get; set; } = new List<ProjectTasks>();
+    public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     
 }

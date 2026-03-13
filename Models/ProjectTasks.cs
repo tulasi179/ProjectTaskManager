@@ -17,5 +17,7 @@ public class ProjectTasks
     public string Status { get; set; } = "Pending";
 
     public int AssigneeId { get; set; }
+
+    
 }
 

@@ -12,9 +12,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     //  the database and may not reflect changes made in the context that have not been persisted to the database
 
     public DbSet<Project> project => Set<Project>();
-
     public DbSet<ProjectTasks> tasks => Set<ProjectTasks>();
-
     public DbSet<TaskDependency> dependent => Set<TaskDependency>();
     public DbSet<Notification> notify => Set<Notification>();
 
@@ -25,6 +23,4 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<TaskDependency>()
             .HasKey(td => new { td.TaskId, td.DependentTaskId });
     }
-
-    //public DbSet<Notification> Notifi => Set<Notification>();
 }

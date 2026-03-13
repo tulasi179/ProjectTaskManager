@@ -19,5 +19,7 @@ public class Project
     [Required]
      public DateTime EndDate{get; set;}
 
+      public ICollection<ProjectTasks> Tasks { get; set; } = new List<ProjectTasks>();
+
 
 }
