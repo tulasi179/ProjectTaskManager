@@ -12,8 +12,10 @@ namespace Projecttaskmanager.Services
 
     Task<List<TaskDependency>> GetDependentTasksById(int taskId);
 
-    Task<TaskDependency> AddDependency(TaskDependency dependency);
+     Task<(bool Success, string Message, TaskDependency? Data)> AddDependency(TaskDependency dependency);
 
     Task<bool> RemoveDependency(int taskId, int dependentTaskId);
+
+    //Task<bool> WouldCreateCycle(int taskId, int dependentTaskId);
 }
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Projecttaskmanager.Models;
 
@@ -9,6 +10,8 @@ public class TaskDependency
     public int DependentTaskId { get; set; }
 
     // Navigation properties
-    public ProjectTasks Task { get; set; } = null!;
-    public ProjectTasks DependentTask { get; set; } = null!;
+    [JsonIgnore]
+    public ProjectTasks? Task { get; set; } 
+    [JsonIgnore]
+    public ProjectTasks? DependentTask { get; set; } 
 }

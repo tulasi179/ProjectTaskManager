@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Projecttaskmanager.Models;
 
@@ -13,9 +14,13 @@ public class ProjectTasks
     public int AssigneeId { get; set; }
 
     // Navigation properties
-    public Project Project { get; set; } = null!;
-    public Users Assignee { get; set; } = null!;
+    [JsonIgnore]
+    public Project? Project { get; set; } 
+    [JsonIgnore]
+    public Users? Assignee { get; set; }
+    [JsonIgnore]
     public ICollection<TaskDependency> Dependencies { get; set; } = new List<TaskDependency>();
+    [JsonIgnore]
     public ICollection<TaskDependency> Dependents { get; set; } = new List<TaskDependency>();
 
     

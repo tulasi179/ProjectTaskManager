@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Projecttaskmanager.Models;
 public class Notification
@@ -14,5 +15,6 @@ public class Notification
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Navigation property
+    [JsonIgnore]
     public Users User { get; set; } = null!;
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Projecttaskmanager.Models;
 
@@ -16,7 +17,10 @@ public class Project
     public DateTime EndDate { get; set; }
 
     // Navigation properties
-    public Users Owner { get; set; } = null!;
+    [JsonIgnore]
+    public Users? Owner { get; set; } 
+    [JsonIgnore]
+
     public ICollection<ProjectTasks> Tasks { get; set; } = new List<ProjectTasks>();
 
 
