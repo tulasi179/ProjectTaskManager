@@ -19,6 +19,9 @@ public class NotificationService(AppDbContext context) : INotificationService
 
     public async Task<List<Notification>> GetUserNotifications(int userId)
     {
+        var user = await context.User.FindAsync(userId);
+        if (user is null)
+            throw new KeyNotFoundException($"User with Id {userId} was not found.");
         return await context.notify
             .Where(n => n.UserId == userId)
             .ToListAsync();

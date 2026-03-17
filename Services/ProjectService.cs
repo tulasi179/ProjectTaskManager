@@ -19,8 +19,12 @@ public class ProjectService(AppDbContext context) :IProjectService
 
     public async Task<Project?> GetProjectByIdAsync(int id)
     {
-        var result = await context.project.FindAsync(id);
-        return result;
+         var project = await context.project
+        .AsNoTracking()
+        .FirstOrDefaultAsync(p => p.Id == id);
+        if (project is null)
+            throw new KeyNotFoundException($"Project with Id {id} was not found.");
+        return project;
     }
 
     public  async Task<Project> AddProjectAsync(Project project)
@@ -35,7 +39,7 @@ public class ProjectService(AppDbContext context) :IProjectService
         var pro = await context.project.FindAsync(id);
 
         if(pro==null)
-        return false;
+          throw new KeyNotFoundException($"Project with Id {id} was not found.");
 
         pro.Name = project.Name;
         pro.OwnerId = project.OwnerId;
@@ -49,7 +53,7 @@ public class ProjectService(AppDbContext context) :IProjectService
     {
         var pro = await context.project.FindAsync(id);
         if(pro==null)
-            return false;
+             throw new KeyNotFoundException($"Project with Id {id} was not found.");
 
         context.project.Remove(pro);
         await context.SaveChangesAsync();

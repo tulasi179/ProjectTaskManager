@@ -1,92 +1,119 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Projecttaskmanager.Models;
 using Projecttaskmanager.Services;
+using Projecttaskmanager.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
 namespace Projecttaskmanager.Controllers;
 
+[Authorize]
+[Route("api/[controller]")]
+[ApiController]
+public class TaskController(ITaskService service) : ControllerBase
+{
     [Authorize(Roles = "Admin")]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TaskController(ITaskService service) : ControllerBase
+    [HttpGet]
+    public async Task<ActionResult<List<ProjectTasks>>> GetTasks()
+        => Ok(await service.GetAllTasksAsync());
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProjectTasks>> GetTask(int id)
     {
-        //we need to inject the service , there are two ways to do that
+      var task = await service.GetTasksByIdAsync(id);
+       return Ok(task);
+    }
 
-        //1st : using the constructor (older way)
-        /*
-        private static readonly List<Users> characters = new()
+    // Both Admin and User can view tasks by project
+    // but User only sees tasks assigned to them
+    [HttpGet("project/{id}")]
+    public async Task<ActionResult<List<ProjectTasks>>> GetTasksByProject(int id)
+    {
+        var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var isAdmin = User.IsInRole("Admin");
+
+        var tasks = await service.GetTasksByProjectId(id);
+
+        // Filter to only assigned tasks if User role
+        if (!isAdmin)
+            tasks = tasks.Where(t => t.AssigneeId == currentUserId).ToList();
+
+        if (!tasks.Any())
+            return NotFound("No tasks found");
+
+        return Ok(tasks);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+  public async Task<ActionResult<TaskResponseDto>> CreateTask(TaskRequestDto dto)
         {
-        new Users{id = 1, Username="fghjk", passwordhash="dfghjkl",Isactive=true}
-        }
-        */
-
-        //2nd way is implemented in the code.
-
-        
-       [HttpGet]
-        public async Task<ActionResult<List<ProjectTasks>>> GetTasks()
-                 => Ok(await service.GetAllTasksAsync());
-        //  instead of the above method you can aslo this method below..
-    //    public async Task<ActionResult<List<Users>>> GetUsers()
-    //    {
-    //       return Ok(users);
-    //    
-
-         [HttpGet("{id}")]
-         public async Task<ActionResult<ProjectTasks>> GetTasks(int id)
+            var task = new ProjectTasks
             {
-                var task = await service.GetTasksByIdAsync(id);
-                return task is null ? NotFound("project with the given Id was not found") : Ok(task);
-                // if(user is null)
-                //     {
-                //         return NotFound("User with the given id way not found");
-                //     }
-                // return Ok(user);
-            }
-            [HttpGet("project/{id}")]
-        public async Task<ActionResult<List<ProjectTasks>>> GetTasksByProject(int id)
-        {
-            var tasks = await service.GetTasksByProjectId(id);
-
-            if (!tasks.Any())
-                return NotFound("No Task is Assigned to that Project");
-
-            return Ok(tasks);
+                ProjectId = dto.ProjectId,
+                Title = dto.Title,
+                Description = dto.Description,
+                AssigneeId = dto.AssigneeId
+            };
+            var created = await service.AddTasksAsync(task);
+            return Ok(new TaskResponseDto
+            {
+                Id = created.Id,
+                ProjectId = created.ProjectId,
+                Title = created.Title,
+                Description = created.Description,
+                Status = created.Status,
+                AssigneeId = created.AssigneeId
+            });
         }
-        [HttpPost]
-        public async Task<ActionResult<ProjectTasks>> CreateTask(ProjectTasks tasks)
+
+    // Admin can update everything, User can only update status of their own task
+  
+[HttpPatch("{id}/status")]
+public async Task<IActionResult> UpdateTaskStatus(int id, TaskStatusUpdateDto dto)
+{
+    var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var isAdmin = User.IsInRole("Admin");
+
+    var existing = await service.GetTasksByIdAsync(id); // throws 404 if not found
+
+    if (!isAdmin && existing.AssigneeId != currentUserId)
+        return Forbid();
+
+    var blockingTasks = await service.GetBlockingTasksAsync(id);
+    if (blockingTasks.Any(t => t.Status != "Completed"))
     {
-        var CreatedTask = await service.AddTasksAsync(tasks);
-        return Ok(CreatedTask);
+        var pendingTitles = blockingTasks
+            .Where(t => t.Status != "Completed")
+            .Select(t => t.Title);
+        return BadRequest($"Cannot update status. The following tasks must be completed first: {string.Join(", ", pendingTitles)}");
     }
 
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(int id , ProjectTasks tasks)
+    if (!isAdmin)
     {
-        var result = await service.UpdateTaskAsync(id,tasks);
+        var allowedTransitions = new Dictionary<string, string>
+        {
+            { "Pending", "InProgress" },
+            { "InProgress", "Completed" }
+        };
 
-        if(!result)
-        return NotFound("Task Not found");
-
-        return Ok("User Updated sucessfully");
+        if (!allowedTransitions.TryGetValue(existing.Status, out var allowedNext)
+            || dto.Status != allowedNext)
+            return BadRequest($"Invalid transition. '{existing.Status}' can only move to '{allowedTransitions.GetValueOrDefault(existing.Status)}'.");
     }
 
+    existing.Status = dto.Status;
+    await service.UpdateTaskAsync(id, existing); // ← removed result check
+    return Ok("Task status updated successfully");
+}
+
+
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteTask(int id)
     {
-        var result = await service.DeleteTaskAsync(id);
-
-        if(!result)
-        return NotFound("Task Not Found");
-
-        return Ok("Task Deleted Successfully");
+       await service.DeleteTaskAsync(id);
+        return Ok("Task deleted successfully");
     }
-
-    }
+}

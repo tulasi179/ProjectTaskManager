@@ -21,19 +21,21 @@ public class UsersServices(AppDbContext context) : IUsersService
 
     public async Task<UserResponce?> GetUserByIdAsync(int id)
     {
-       var result= await context.User
-            .Where(c =>c.Id ==id)
-            .Select(c => new UserResponce
-            {
-                Username = c.Username,
-                Email = c.Email,
-                Role = c.Role
-            })
-            .FirstOrDefaultAsync();
+       var result = await context.User
+        .Where(c => c.Id == id)
+        .Select(c => new UserResponce
+        {
+            Username = c.Username,
+            Email = c.Email,
+            Role = c.Role
+        })
+        .FirstOrDefaultAsync();
 
-       return result;
+        if (result is null)
+            throw new KeyNotFoundException($"User with Id {id} was not found.");
 
-    }
+        return result;
+   }
     public async Task<Users> AddUsersAsync(Users users)
     {
          context.User.Add(users);
@@ -48,7 +50,7 @@ public class UsersServices(AppDbContext context) : IUsersService
         var user = await context.User.FindAsync(id);
 
         if (user == null)
-            return false;
+            throw new KeyNotFoundException($"User with Id {id} was not found.");
 
         context.User.Remove(user);
 
@@ -62,7 +64,7 @@ public class UsersServices(AppDbContext context) : IUsersService
         var existingUser = await context.User.FindAsync(id);
 
         if (existingUser == null)
-            return false;
+            throw new KeyNotFoundException($"User with Id {id} was not found.");
 
         existingUser.Username = dto.Username;
         existingUser.Email= dto.Email;

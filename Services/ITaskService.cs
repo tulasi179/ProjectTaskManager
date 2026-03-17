@@ -25,12 +25,14 @@ namespace Projecttaskmanager.Services
 
     Task<List<ProjectTasks>> GetTasksByProjectId(int id);
 
-    Task<ProjectTasks?> GetTasksByIdAsync(int id);
+    Task<ProjectTasks> GetTasksByIdAsync(int id);
 
     Task<ProjectTasks> AddTasksAsync(ProjectTasks tasks);
     Task<bool> DeleteTaskAsync(int id);
 
     Task<bool> UpdateTaskAsync(int id , ProjectTasks tasks);
+
+    Task<List<ProjectTasks>> GetBlockingTasksAsync(int taskId);
 
     }
 }

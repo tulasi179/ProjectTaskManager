@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Projecttaskmanager.Models;
+using Projecttaskmanager.DTOs;
 using Projecttaskmanager.Services;
 
 namespace Projecttaskmanager.Controllers;
@@ -16,16 +17,18 @@ public class TaskDependencyController(ITaskDependencyService service) : Controll
 
     [HttpGet("{taskId}/dependents")]
     public async Task<ActionResult<List<TaskDependency>>> GetDependentTasksById(int taskId)
-    {
-        var tasks = await service.GetDependentTasksById(taskId);
-        return Ok(tasks);
-    }
+        => Ok(await service.GetDependentTasksById(taskId));
 
-    [HttpPost]
-    public async Task<ActionResult<TaskDependency>> AddDependency(TaskDependency dependency)
+    [HttpPost] // ← removed duplicate [HttpPost]
+    public async Task<ActionResult<TaskDependency>> AddDependency(TaskDependencyRequestDto dto)
     {
+        var dependency = new TaskDependency
+        {
+            TaskId = dto.TaskId,
+            DependentTaskId = dto.DependentTaskId
+        };
+
         var (success, message, data) = await service.AddDependency(dependency);
-
         if (!success)
             return BadRequest(new { message });
 
@@ -36,7 +39,6 @@ public class TaskDependencyController(ITaskDependencyService service) : Controll
     public async Task<IActionResult> RemoveDependency(int taskId, int dependentTaskId)
     {
         var result = await service.RemoveDependency(taskId, dependentTaskId);
-
         if (!result)
             return NotFound("Dependency not found");
 
