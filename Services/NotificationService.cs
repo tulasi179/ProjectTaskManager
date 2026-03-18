@@ -26,4 +26,20 @@ public class NotificationService(AppDbContext context) : INotificationService
             .Where(n => n.UserId == userId)
             .ToListAsync();
     }
+
+    public async Task MarkAsReadAsync(int notificationId, int userId)
+    {
+        var notification = await context.notify
+            .FirstOrDefaultAsync(n => n.Id == notificationId);
+
+        if (notification is null)
+            throw new KeyNotFoundException($"Notification with Id {notificationId} was not found.");
+
+        // Users can only mark their own notifications as read
+        if (notification.UserId != userId)
+            throw new UnauthorizedAccessException("You can only mark your own notifications as read.");
+
+        notification.ReadStatus = true;
+        await context.SaveChangesAsync();
+    }
 }

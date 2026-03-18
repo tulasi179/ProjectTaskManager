@@ -36,4 +36,13 @@ public class NotificationController(INotificationService notificationService) : 
         var notifications = await notificationService.GetUserNotifications(userId);
         return Ok(notifications);
     }
+
+
+    [HttpPatch("{id}/read")]
+    public async Task<IActionResult> MarkAsRead(int id)
+    {
+        var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        await notificationService.MarkAsReadAsync(id, currentUserId);
+        return Ok("Notification marked as read.");
+    }
 }
