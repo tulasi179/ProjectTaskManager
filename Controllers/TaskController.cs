@@ -31,7 +31,10 @@ public class TaskController(ITaskService service) : ControllerBase
     public async Task<ActionResult<List<ProjectTasks>>> GetTasksByProject(int id)
     {
         var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var isAdmin = User.IsInRole("Admin");
+        //Get the logged-in user’s ID from the JWT token
+        //It looks inside the JWT token and finds a specific claim -> User.FindFirstValue(ClaimTypes.NameIdentifier)
+        //ClaimTypes.NameIdentifier  This is a standard claim type for: User ID
+               var isAdmin = User.IsInRole("Admin");
 
         var tasks = await service.GetTasksByProjectId(id);
 

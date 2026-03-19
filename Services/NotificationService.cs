@@ -1,6 +1,7 @@
 using Projecttaskmanager.Data;
 using Projecttaskmanager.Models;
 using Microsoft.EntityFrameworkCore;
+using Projecttaskmanager.DTOs;
 namespace Projecttaskmanager.Services;
 
 public class NotificationService(AppDbContext context) : INotificationService
@@ -17,7 +18,7 @@ public class NotificationService(AppDbContext context) : INotificationService
         await context.SaveChangesAsync();
     }
 
-    public async Task<List<Notification>> GetUserNotifications(int userId)
+    public async Task<List<Notification>>  GetUserNotifications(int userId)
     {
         var user = await context.User.FindAsync(userId);
         if (user is null)
@@ -26,6 +27,15 @@ public class NotificationService(AppDbContext context) : INotificationService
             .Where(n => n.UserId == userId)
             .ToListAsync();
     }
+
+    public async Task<List<NotificationResponseDto>> GetAllUserNotification()
+         => await context.notify.Select(c => new NotificationResponseDto
+     {
+        Id  = c.Id,
+         UserId = c.UserId,
+         Message = c.message
+
+     }).ToListAsync();
 
     public async Task MarkAsReadAsync(int notificationId, int userId)
     {

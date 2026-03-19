@@ -18,7 +18,7 @@ public class ProjectController(IProjectService service) : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Project>> GetProject(int id)
     {
-        var project = await service.GetProjectByIdAsync(id); // throws 404 if not found
+        var project = await service.GetProjectByIdAsync(id); //404 error handled in service.
         return Ok(project);
     }
 
@@ -55,7 +55,7 @@ public class ProjectController(IProjectService service) : ControllerBase
             StartDate = dto.StartDate,
             EndDate = dto.EndDate
         };
-        await service.UpdateProjectAsync(id, project); // throws 404 if not found
+        await service.UpdateProjectAsync(id, project); //404 error
         return Ok("Project updated successfully");
     }
 

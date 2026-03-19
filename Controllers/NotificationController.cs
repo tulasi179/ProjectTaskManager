@@ -11,10 +11,10 @@ namespace Projecttaskmanager.Controllers;
 [Route("api/[controller]")]
 public class NotificationController(INotificationService notificationService) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("my")]
    public async Task<IActionResult> GetMyNotifications()
     {
-        var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);//*
         var notifications = await notificationService.GetUserNotifications(currentUserId);
 
         var response = notifications.Select(n => new NotificationResponseDto
@@ -37,6 +37,11 @@ public class NotificationController(INotificationService notificationService) : 
         return Ok(notifications);
     }
 
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<ActionResult<List<NotificationResponseDto>>> GetAllUserNotification()
+      => Ok( await notificationService.GetAllUserNotification());
 
     [HttpPatch("{id}/read")]
     public async Task<IActionResult> MarkAsRead(int id)

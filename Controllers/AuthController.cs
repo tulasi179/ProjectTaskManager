@@ -24,7 +24,7 @@ namespace Projecttaskmanager.Controllers
     {
 
        [HttpPost("register")]
-       public async Task<ActionResult<Users>> Register(UserResponce request)
+      public async Task<ActionResult<Users>> Register(UserResponce request)
         {
            var user = await authService.RegisterAsync(request);
            if(user is null)
@@ -33,7 +33,6 @@ namespace Projecttaskmanager.Controllers
 
             return Ok(user);
         }
-
         [HttpPost("login")]
         public async Task<ActionResult<TokenResponce>> Login(UserResponce request)
         {
