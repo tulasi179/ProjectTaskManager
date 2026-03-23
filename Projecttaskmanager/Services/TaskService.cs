@@ -134,7 +134,7 @@ public class TaskService(AppDbContext context, INotificationService notification
     {
         // Find tasks that must complete BEFORE this task can start
         return await context.dependent
-            .Where(d => d.DependentTaskId == taskId)  // ← this one is correct already
+            .Where(d => d.DependentTaskId == taskId) 
             .Join(context.tasks,
                 d => d.TaskId,
                 t => t.Id,
@@ -143,7 +143,7 @@ public class TaskService(AppDbContext context, INotificationService notification
     } 
     public async Task<bool> UpdateTaskAsync(int id, ProjectTasks tasks)
     {
-        // Force fresh fetch from DB, bypass EF cache
+        
         var existing = await context.tasks
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Id == id);
@@ -154,7 +154,7 @@ public class TaskService(AppDbContext context, INotificationService notification
 
         Console.WriteLine($"DEBUG: justCompleted = {justCompleted}, newStatus = {tasks.Status}, oldStatus = {existing.Status}");
 
-        // Update using ExecuteUpdateAsync to avoid tracking issues
+      
         await context.tasks
             .Where(t => t.Id == id)
             .ExecuteUpdateAsync(s => s
@@ -166,7 +166,7 @@ public class TaskService(AppDbContext context, INotificationService notification
 
         if (justCompleted)
         {
-            existing.Id = id; // make sure id is set for notification
+            existing.Id = id;
             existing.Title = tasks.Title == string.Empty ? existing.Title : tasks.Title;
             Console.WriteLine($"DEBUG: Calling NotifyDependentTaskAssignees for task {id}");
             await NotifyDependentTaskAssignees(existing);

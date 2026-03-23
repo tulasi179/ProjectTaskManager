@@ -92,8 +92,8 @@ public class TaskDependencyService(AppDbContext context) : ITaskDependencyServic
     }
 
     // Checks if making TaskId depend on DependentTaskId would create a cycle
-    // Logic: starting from DependentTaskId, can we reach TaskId by following dependencies?
-    // If yes → adding this link would close the loop → cycle detected
+    // starting from DependentTaskId, can we reach TaskId by following dependencies?
+    // If yes adding this link would close the loop → cycle detected
     private async Task<bool> WouldCreateCycle(int taskId, int dependentTaskId)
     {
         var visited = new HashSet<int>();
