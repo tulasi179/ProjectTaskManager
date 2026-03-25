@@ -6,12 +6,14 @@ namespace Projecttaskmanager.Services;
 
 public class NotificationService(AppDbContext context) : INotificationService
 {
+    
     public async Task CreateNotification(int userId, string Message)
     {
         var notification = new Notification
         {
             UserId = userId,
-            message = Message
+            message = Message,
+            CreatedAt = DateTime.UtcNow  
         };
 
         context.notify.Add(notification);

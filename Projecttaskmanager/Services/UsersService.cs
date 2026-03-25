@@ -10,14 +10,15 @@ namespace Projecttaskmanager.Services;
 public class UsersServices(AppDbContext context) : IUsersService
 {
 
-    public async Task<List<UserResponce>> GetAllUsersAsync()
-     => await context.User.Select(c => new UserResponce
-     {
-         Username = c.Username,
-         Email = c.Email,
-         Role = c.Role
-
-     }).ToListAsync();
+   public async Task<List<UserResponce>> GetAllUsersAsync()
+    => await context.User.Select(c => new UserResponce
+    {
+        Id = c.Id,       
+        Username = c.Username,
+        Email = c.Email,
+        Role = c.Role,
+        IsActive = c.IsActive
+    }).ToListAsync();
 
     public async Task<UserResponce?> GetUserByIdAsync(int id)
     {

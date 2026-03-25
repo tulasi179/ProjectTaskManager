@@ -49,6 +49,20 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 //when ever something wants to inject the  IUserService then it will auotomatically
 // get the UsersService implementation.
 
+
+
+//frontend runs on different prot and backend runs on different port 
+//CORS help frontend to call the apis
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -59,6 +73,7 @@ if (app.Environment.IsDevelopment())
 
 }
 app.UseHttpsRedirection();
+app.UseCors("AllowFrontend");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();

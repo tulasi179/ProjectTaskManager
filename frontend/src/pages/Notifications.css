@@ -1,0 +1,171 @@
+.notifications-container {
+  min-height: 100vh;
+  background: #f0f2f5;
+}
+
+.navbar {
+  background: #1a1a2e;
+  color: white;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar h1 { font-size: 18px; font-weight: 600; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-links a {
+  color: #a5b4fc;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-links a:hover { color: white; }
+
+.nav-user { color: #e2e8f0; font-size: 14px; }
+
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.logout-btn:hover { background: #dc2626; }
+
+.notifications-content {
+  padding: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  font-size: 24px;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.unread-count {
+  font-size: 13px;
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.mark-all-btn {
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.mark-all-btn:hover { background: #4338ca; }
+
+.empty-state {
+  text-align: center;
+  padding: 80px;
+  color: #888;
+  background: white;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.empty-state p:first-child {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 4px solid transparent;
+  transition: box-shadow 0.2s;
+}
+
+.notification-card.unread {
+  border-left-color: #4f46e5;
+  background: #fafaff;
+}
+
+.notification-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.notification-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.notification-icon {
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.notification-text {
+  flex: 1;
+}
+
+.notification-message {
+  font-size: 14px;
+  color: #1a1a2e;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #999;
+}
+
+.read-btn {
+  background: #ede9fe;
+  color: #4f46e5;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+  margin-left: 16px;
+}
+
+.read-btn:hover { background: #ddd6fe; }
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+  color: #666;
+}

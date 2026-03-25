@@ -43,6 +43,7 @@ public class NotificationController(INotificationService notificationService) : 
     public async Task<ActionResult<List<NotificationResponseDto>>> GetAllUserNotification()
       => Ok( await notificationService.GetAllUserNotification());
 
+    [Authorize]
     [HttpPatch("{id}/read")]
     public async Task<IActionResult> MarkAsRead(int id)
     {
