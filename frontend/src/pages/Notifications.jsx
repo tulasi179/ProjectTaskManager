@@ -16,17 +16,19 @@ function Notifications() {
     fetchNotifications()
   }, [])
 
-  const fetchNotifications = async () => {
-    try {
-      const res = await api.get('/notification')
-      const data = res.data.data || res.data
-      setNotifications(data)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
+ const fetchNotifications = async () => {
+  try {
+    // Admin gets all notifications, User gets only theirs
+    const endpoint = user.role === 'Admin' ? '/notification' : '/notification/my'
+    const res = await api.get(endpoint)
+    const data = res.data.data || res.data
+    setNotifications(data)
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setLoading(false)
   }
+}
 
   const handleMarkAsRead = async (id) => {
     try {

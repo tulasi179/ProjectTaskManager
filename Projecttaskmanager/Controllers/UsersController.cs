@@ -60,4 +60,12 @@ public class UsersController(IUsersService service) : ControllerBase
         await service.DeleteUsersAysnc(id); // throws 404 if not found
         return Ok("User deleted successfully");
     }
+
+    [HttpPatch("change-password")]
+public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+{
+    var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    await service.ChangePasswordAsync(currentUserId, dto);
+    return Ok("Password changed successfully.");
+}
 }

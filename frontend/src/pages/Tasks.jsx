@@ -3,7 +3,6 @@ import { useNavigate, useParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import api from '../api/axios'
 import './Tasks.css'
-import Navbar from '../components/Navbar'
 
 function Tasks() {
   const { user } = useAuth()
@@ -13,10 +12,15 @@ function Tasks() {
   const [tasks, setTasks] = useState([])
   const [users, setUsers] = useState([])
   const [project, setProject] = useState(null)
+  const [dependencies, setDependencies] = useState([]) // all dependencies
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
+  const [showDepModal, setShowDepModal] = useState(false)
   const [editTask, setEditTask] = useState(null)
+  const [depTask, setDepTask] = useState(null) // task we're managing deps for
   const [error, setError] = useState('')
+  const [depError, setDepError] = useState('')
+  const [selectedDep, setSelectedDep] = useState('')
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -39,10 +43,12 @@ function Tasks() {
       setProject(projectRes.data)
 
       if (user.role === 'Admin') {
-        const usersRes = await api.get('/users')
-        const usersData = usersRes.data.data || usersRes.data
-        console.log('Users API response sample:', usersData[0]) // debug
-        setUsers(usersData)
+        const [usersRes, depsRes] = await Promise.all([
+          api.get('/users'),
+          api.get('/taskdependency')
+        ])
+        setUsers(usersRes.data.data || usersRes.data)
+        setDependencies(depsRes.data.data || depsRes.data)
       }
     } catch (err) {
       console.error(err)
@@ -51,9 +57,33 @@ function Tasks() {
     }
   }
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+  // Get blocking task IDs for a given task
+ const getBlockingTasks = (taskId) => {
+  return dependencies
+    .filter(d => d.dependentTaskId === taskId)  // this task is the blocked one
+    .map(d => d.taskId)                          // return the blocker IDs
+}
+
+  // Check if a task is blocked (any blocking task not completed)
+  const isTaskBlocked = (taskId) => {
+    const blockingIds = getBlockingTasks(taskId)
+    if (!blockingIds.length) return false
+    return blockingIds.some(bid => {
+      const blockingTask = tasks.find(t => t.id === bid)
+      return blockingTask && blockingTask.status !== 'Completed'
+    })
   }
+
+  // Get names of incomplete blocking tasks
+  const getBlockingNames = (taskId) => {
+    const blockingIds = getBlockingTasks(taskId)
+    return blockingIds
+      .map(bid => tasks.find(t => t.id === bid))
+      .filter(t => t && t.status !== 'Completed')
+      .map(t => t.title)
+  }
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
   const openCreateModal = () => {
     setEditTask(null)
@@ -72,6 +102,13 @@ function Tasks() {
     })
     setError('')
     setShowModal(true)
+  }
+
+  const openDepModal = (task) => {
+    setDepTask(task)
+    setSelectedDep('')
+    setDepError('')
+    setShowDepModal(true)
   }
 
   const handleSubmit = async (e) => {
@@ -121,18 +158,40 @@ function Tasks() {
     }
   }
 
+ 
+const handleAddDependency = async () => {
+  if (!selectedDep) return
+  setDepError('')
+  try {
+    await api.post('/taskdependency', {
+      taskId: parseInt(selectedDep),   //  the blocker (must complete first)
+      dependentTaskId: depTask.id      //  the blocked task
+    })
+    await fetchAll()
+    setSelectedDep('')
+  } catch (err) {
+    setDepError(err.response?.data?.message || 'Failed to add dependency.')
+  }
+}
+
+  const handleRemoveDependency = async (blockerId) => {
+    try {
+      await api.delete(`/taskdependency/${blockerId}/${depTask.id}`)
+      fetchAll()
+    } catch (err) {
+      alert('Failed to remove dependency.')
+    }
+  }
+
   const getNextStatus = (current) => {
     if (current === 'Pending') return 'InProgress'
     if (current === 'InProgress') return 'Completed'
     return null
   }
 
-  // Works once backend returns Id in the users response
   const getUserName = (assigneeId) => {
     if (!users.length) return `User #${assigneeId}`
-    const found = users.find(u =>
-      String(u.id ?? u.Id) === String(assigneeId)
-    )
+    const found = users.find(u => String(u.id ?? u.Id) === String(assigneeId))
     return found ? (found.username ?? found.Username ?? `User #${assigneeId}`) : `User #${assigneeId}`
   }
 
@@ -140,8 +199,17 @@ function Tasks() {
 
   return (
     <div className='tasks-container'>
+      <nav className='navbar'>
+        <h1>Project Task Manager</h1>
+        <div className='nav-links'>
+          <Link to='/dashboard'>Dashboard</Link>
+          <Link to='/projects'>Projects</Link>
+          <Link to='/notifications'>Notifications</Link>
+          <span className='nav-user'>👤 {user.username}</span>
+          <button onClick={() => { localStorage.clear(); navigate('/login') }} className='logout-btn'>Logout</button>
+        </div>
+      </nav>
 
-      <Navbar/>
       <div className='tasks-content'>
         <div className='page-header'>
           <div>
@@ -166,14 +234,18 @@ function Tasks() {
                   <th>Description</th>
                   <th>Assignee</th>
                   <th>Status</th>
+                  <th>Blocked By</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {tasks.map(t => {
                   const nextStatus = getNextStatus(t.status)
+                  const blocked = isTaskBlocked(t.id)
+                  const blockingNames = getBlockingNames(t.id)
+
                   return (
-                    <tr key={t.id}>
+                    <tr key={t.id} className={blocked ? 'blocked-row' : ''}>
                       <td>{t.title}</td>
                       <td>{t.description || '—'}</td>
                       <td>{user.role === 'Admin' ? getUserName(t.assigneeId) : 'You'}</td>
@@ -182,16 +254,35 @@ function Tasks() {
                           {t.status}
                         </span>
                       </td>
+                      <td>
+                        {blockingNames.length > 0 ? (
+                          <span className='blocked-badge' title={blockingNames.join(', ')}>
+                            🔒 {blockingNames.length} blocking
+                          </span>
+                        ) : (
+                          <span className='clear-badge'>✓ Clear</span>
+                        )}
+                      </td>
                       <td className='action-cell'>
-                        {nextStatus && (
+                        {nextStatus && !blocked && (
                           <button
                             className='status-btn'
                             onClick={() => handleStatusUpdate(t, nextStatus)}>
                             → {nextStatus}
                           </button>
                         )}
+                        {nextStatus && blocked && (
+                          <span
+                            className='blocked-status-btn'
+                            title={`Blocked by: ${blockingNames.join(', ')}`}>
+                            🔒 Blocked
+                          </span>
+                        )}
                         {user.role === 'Admin' && (
                           <>
+                            <button className='dep-btn' onClick={() => openDepModal(t)}>
+                              Dependencies
+                            </button>
                             <button className='edit-btn' onClick={() => openEditModal(t)}>Edit</button>
                             <button className='delete-btn' onClick={() => handleDelete(t.id)}>Delete</button>
                           </>
@@ -206,6 +297,7 @@ function Tasks() {
         )}
       </div>
 
+      {/* Task Create/Edit Modal */}
       {showModal && (
         <div className='modal-overlay' onClick={() => setShowModal(false)}>
           <div className='modal' onClick={e => e.stopPropagation()}>
@@ -214,24 +306,13 @@ function Tasks() {
             <form onSubmit={handleSubmit}>
               <div className='form-group'>
                 <label>Title</label>
-                <input
-                  type='text'
-                  name='title'
-                  value={form.title}
-                  onChange={handleChange}
-                  placeholder='Task title'
-                  required
-                />
+                <input type='text' name='title' value={form.title}
+                  onChange={handleChange} placeholder='Task title' required />
               </div>
               <div className='form-group'>
                 <label>Description</label>
-                <textarea
-                  name='description'
-                  value={form.description}
-                  onChange={handleChange}
-                  placeholder='Task description'
-                  rows={3}
-                />
+                <textarea name='description' value={form.description}
+                  onChange={handleChange} placeholder='Task description' rows={3} />
               </div>
               <div className='form-group'>
                 <label>Assign To</label>
@@ -249,6 +330,72 @@ function Tasks() {
                 <button type='submit' className='submit-btn'>{editTask ? 'Update' : 'Create'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Dependencies Modal */}
+      {showDepModal && depTask && (
+        <div className='modal-overlay' onClick={() => setShowDepModal(false)}>
+          <div className='modal dep-modal' onClick={e => e.stopPropagation()}>
+            <h3>Dependencies for: <span className='dep-task-name'>{depTask.title}</span></h3>
+            <p className='dep-hint'>This task is blocked until all dependencies are Completed.</p>
+
+            {/* Current dependencies */}
+            <div className='dep-list'>
+              <label>Current Blocking Tasks</label>
+              {getBlockingTasks(depTask.id).length === 0 ? (
+                <p className='no-deps'>No dependencies set.</p>
+              ) : (
+                getBlockingTasks(depTask.id).map(bid => {
+                  const bt = tasks.find(t => t.id === bid)
+                  return bt ? (
+                    <div key={bid} className='dep-item'>
+                      <span className={`status-badge ${bt.status?.toLowerCase()}`}>
+                        {bt.status}
+                      </span>
+                      <span className='dep-item-title'>{bt.title}</span>
+                      <button
+                        className='remove-dep-btn'
+                        onClick={() => handleRemoveDependency(bid)}>
+                        ✕
+                      </button>
+                    </div>
+                  ) : null
+                })
+              )}
+            </div>
+
+            {/* Add new dependency */}
+            <div className='dep-add'>
+              <label>Add Blocking Task</label>
+              {depError && <div className='error-message'>{depError}</div>}
+              <div className='dep-add-row'>
+                <select
+                  value={selectedDep}
+                  onChange={e => setSelectedDep(e.target.value)}>
+                  <option value=''>Select a task...</option>
+                  {tasks
+                    .filter(t =>
+                      t.id !== depTask.id &&
+                      !getBlockingTasks(depTask.id).includes(t.id)
+                    )
+                    .map(t => (
+                      <option key={t.id} value={t.id}>{t.title}</option>
+                    ))}
+                </select>
+                <button
+                  className='add-dep-btn'
+                  onClick={handleAddDependency}
+                  disabled={!selectedDep}>
+                  + Add
+                </button>
+              </div>
+            </div>
+
+            <div className='modal-actions'>
+              <button className='cancel-btn' onClick={() => setShowDepModal(false)}>Close</button>
+            </div>
           </div>
         </div>
       )}

@@ -79,4 +79,21 @@ public class UsersServices(AppDbContext context) : IUsersService
         return true;
     }
 
+   public async Task ChangePasswordAsync(int userId, ChangePasswordDto dto)
+{
+    var user = await context.User.FindAsync(userId);
+    if (user is null)
+        throw new KeyNotFoundException("User not found.");
+
+    var hasher = new PasswordHasher<Users>();
+
+    // Verify current password using PasswordHasher
+    var result = hasher.VerifyHashedPassword(user, user.PasswordHash, dto.CurrentPassword);
+    if (result == PasswordVerificationResult.Failed)
+        throw new UnauthorizedAccessException("Current password is incorrect.");
+
+    // Hash new password using PasswordHasher
+    user.PasswordHash = hasher.HashPassword(user, dto.NewPassword);
+    await context.SaveChangesAsync();
+}
 }

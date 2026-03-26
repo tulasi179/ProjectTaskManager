@@ -11,5 +11,6 @@ public interface IUsersService
     Task<Users> AddUsersAsync(Users users);
     Task<bool> UpdateUserAysnc(int id, UserResponce dto);
     Task<bool> DeleteUsersAysnc(int id);
+    Task ChangePasswordAsync(int userId, ChangePasswordDto dto);
 
 }

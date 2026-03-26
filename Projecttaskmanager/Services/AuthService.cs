@@ -47,29 +47,24 @@ public class AuthService(AppDbContext context , IConfiguration configuration) :I
         };
     }
 
-    public async Task<Users?> RegisterAsync(UserResponce request)
+  public async Task<Users?> RegisterAsync(UserResponce request)
+{
+    if (await context.User.AnyAsync(u => u.Username == request.Username))
+        return null;
+
+    var user = new Users
     {
-        if(await context.User.AnyAsync(u => u.Username == request.Username))
-        {
-            return null;
-        }
+        Username = request.Username,
+        Email = request.Email,
+        Role = request.Role,
+    };
 
-        var user = new Users();
-        var hashedpassword = new PasswordHasher<Users>()
-                    .HashPassword(user , request.Password);
+    user.PasswordHash = new PasswordHasher<Users>().HashPassword(user, request.Password);
 
-            user.Username = request.Username;
-            user.Email = request.Email;          
-            user.PasswordHash = hashedpassword;
-            user.Role = request.Role;
-
-            context.User.Add(user);
-
-            await context.SaveChangesAsync();
-
-            return user;
-    }
-
+    context.User.Add(user);
+    await context.SaveChangesAsync();
+    return user;
+}
         //This runs when the access token expires.
      public async Task<TokenResponce?> RefreshTokensAsync(RefreshTokenRequestDto request)
     {

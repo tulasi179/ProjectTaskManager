@@ -28,7 +28,8 @@ function Login() {
         role: ''
       })
 
-      const { accessToken } = res.data//extract JWT token from the response
+      const { accessToken, refreshToken } = res.data//extract JWT token from the response
+      
 
       // Decode token to get user info
       const payload = JSON.parse(atob(accessToken.split('.')[1]))
@@ -39,7 +40,7 @@ function Login() {
       }
       //from the accesstoken extarct the data of the users like id , username, role
 
-      login(userData, accessToken)
+      login(userData, accessToken, refreshToken)
 
       // Redirect to dashboard depending on role
       if (userData.role === 'Admin')

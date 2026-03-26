@@ -56,8 +56,10 @@ function Dashboard() {
       }
     }
 
-    const notifRes = await api.get('/notification')
-    setNotifications(notifRes.data.data || notifRes.data)
+  const notifRes = await api.get(
+  user.role === 'Admin' ? '/notification' : '/notification/my'
+)
+setNotifications(notifRes.data.data || notifRes.data)
 
   } catch (err) {
     console.error('Dashboard fetch error:', err)
