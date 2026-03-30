@@ -37,11 +37,9 @@ function Dashboard() {
       setTasks(tasksRes.data.data || tasksRes.data)
 
     } else {
-      // Step 1: get all projects
       const projectsRes = await api.get('/project')
       const allProjects = projectsRes.data.data || projectsRes.data
 
-      // Step 2: for each project, fetch tasks (backend auto-filters by JWT)
       if (Array.isArray(allProjects) && allProjects.length > 0) {
         const taskResults = await Promise.allSettled(
           allProjects.map(p => api.get(`/task/project/${p.id}`))
@@ -56,10 +54,9 @@ function Dashboard() {
       }
     }
 
-  const notifRes = await api.get(
-  user.role === 'Admin' ? '/notification' : '/notification/my'
-)
-setNotifications(notifRes.data.data || notifRes.data)
+    // ✅ Same endpoint for both roles — backend uses JWT to filter
+    const notifRes = await api.get('/notification')
+    setNotifications(notifRes.data.data || notifRes.data)
 
   } catch (err) {
     console.error('Dashboard fetch error:', err)
@@ -67,6 +64,8 @@ setNotifications(notifRes.data.data || notifRes.data)
     setLoading(false)
   }
 }
+
+
 
   if (loading) return <div className='loading'>Loading...</div>
 
@@ -86,6 +85,7 @@ setNotifications(notifRes.data.data || notifRes.data)
           user={user}
           tasks={tasks}
           notifications={notifications}
+          onStatusUpdate={fetchData} 
         />
       )}
     </div>

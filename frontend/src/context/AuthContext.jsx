@@ -1,8 +1,12 @@
 import { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext()
+//context object with thedefault value null
 
+//provider will be a component which will wrap the rest of the application and provides auth context to all of its childern
+// it accept children prop
 export function AuthProvider({ children }) {
+
   const [user, setUser] = useState(
     JSON.parse(localStorage.getItem('user')) || null
   )
@@ -33,6 +37,8 @@ export function AuthProvider({ children }) {
   )
 }
 
+
+//useAuth hook
 export function useAuth() {
   return useContext(AuthContext)
 }

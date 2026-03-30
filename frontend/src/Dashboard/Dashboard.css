@@ -1,3 +1,37 @@
+.status-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.status-btn.start {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-btn.start:hover { background: #bfdbfe; }
+
+.status-btn.complete {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.status-btn.complete:hover { background: #a7f3d0; }
+
+.status-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.done-label {
+  font-size: 12px;
+  color: #059669;
+  font-weight: 500;
+}
 .loading {
   display: flex;
   justify-content: center;

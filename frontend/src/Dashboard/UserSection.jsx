@@ -1,7 +1,7 @@
 import StatsCards from './StatsCards'
 import TasksTable from './TasksTable'
 
-function UserSection({ user, tasks, notifications }) {
+function UserSection({ user, tasks, notifications, onStatusUpdate }) {
   return (
     <div className='dashboard-content'>
       <h2>Welcome, {user.username}! 👋</h2>
@@ -13,7 +13,7 @@ function UserSection({ user, tasks, notifications }) {
         isAdmin={false}
       />
 
-      <TasksTable tasks={tasks} isAdmin={false} />
+      <TasksTable tasks={tasks} isAdmin={false} onStatusUpdate={onStatusUpdate} />
     </div>
   )
 }
